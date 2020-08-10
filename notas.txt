@@ -1,1 +1,34 @@
-Notas
+Notas:
+	-CryptoCurrency:
+		-Bitcoin, ethereum, etc=> 
+			*monedas digitales
+			*descentralizadas
+			*nadie las controla ni las genera
+			*Hay 21 millones de monedas en bitcoin, son limitadas
+	-Ledgers: Las entidades/registros que manejan las trxs(lista de trxs) => Bloques
+		-Centralizados:
+			*las trxs fisicas
+				*tardan en viajar
+				*tienen comision
+				*son suceptibles a hackers ya que estan centralizadas en bancos
+		-Descentralizados
+			*se usan nodes: son servidores que la gente usa
+				*cada uno tiene copias de los ledgers
+				*hay millones
+				*todas las trxs, de A => B, de C => A o D => G se van registrando
+				*si hackeo uno tengo los otros, por lo que son independientes
+				*cuando uno cambia se valida con los otros y sino cambia no se le cree
+	-Public/Private keys
+		-Private: 
+			*al firmar yo uso el mensaje y la clave privada Sign(message,privateKey)= firma
+		-Public:
+			*para verificar uso Sign(message, firma, publicKey) = True / False
+		-No se puede duplicar registros para duplicar trxs ya que tienen id unico
+		-Se uso SHA256
+	-Mining:
+		-Proof of work:
+		 hashear = transaction + nonce + prev hash
+			*al minar se hace el proceso de probar que nonce(offset) puede lograr que la trx empiece con una cant de ceros predefinida
+			*cuando un nodo consigue un nonce valido, se registra la trx y se toma como valida
+			*al encontrar el nonce se crea un nuevo bloque y se lo agrega a la cadena
+			*no puedo modificar cosas viejas ya que tengo que modificar eso, y todos los bloques hasta el presente(que siguen creciendo), a su vez nadie me cree porque habria que controlar la mayoria=> siempre la cadena mas larga gana (la que voy a creer)
