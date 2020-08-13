@@ -2,19 +2,30 @@
 const Block = require('./block')
 const Blockchain = require('./blockchain')
 const Transaction = require('./transaction')
-
+const BlockchainNode = require('./blockchainnode')
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
+
+
+let locationNumber
+
+/*
+    Access the arguments
+ */
+process.argv.forEach((val, index, array) => {
+    console.log(array)
+    locationNumber = parseInt(array [2]) || 3000
+})
 
 /*
     Blockchain info
  */
 
-const transactions = []
+let transactions = []
 const genesisBlock = new Block()
 const blockchain = new Blockchain(genesisBlock)
-
+const nodes = []
 /*
     APP endpoints setup
  */
@@ -25,9 +36,19 @@ app.get('/', (request, response) => {
     response.send('hello world')
 })
 
+app.post('/nodes/register', (request, response) => {
+    const nodesLists = request.body.urls
+    nodesLists.forEach((nodeUrlOb) => {
+        const node = new BlockchainNode(nodeUrlOb.url)
+        nodes.push(node)
+    })
+    response.json(nodes)
+})
+
 app.get('/mine', (request, response) => {
     const minedBlock = blockchain.getNextBlock(transactions)
     blockchain.addBlock(minedBlock)
+    transactions = []
     response.json(minedBlock)
 })
 
@@ -44,7 +65,7 @@ app.get('/blockchain', (request, response) => {
     response.json(blockchain)
 })
 
-app.listen(3000, () => {
+app.listen(locationNumber, () => {
     console.log('The server has started propperly')
 })
 
