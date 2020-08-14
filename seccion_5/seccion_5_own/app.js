@@ -3,8 +3,10 @@ const Block = require('./block')
 const Blockchain = require('./blockchain')
 const Transaction = require('./transaction')
 const BlockchainNode = require('./blockchainnode')
+
 const bodyParser = require('body-parser')
 const express = require('express')
+const fetch = require('node-fetch')
 const app = express()
 
 
@@ -21,11 +23,11 @@ process.argv.forEach((val, index, array) => {
 /*
     Blockchain info
  */
-
-let transactions = []
-const genesisBlock = new Block()
-const blockchain = new Blockchain(genesisBlock)
 const nodes = []
+const genesisBlock = new Block()
+let transactions = []
+let blockchain = new Blockchain(genesisBlock)
+
 /*
     APP endpoints setup
  */
@@ -34,6 +36,21 @@ app.use(bodyParser.json())
 
 app.get('/', (request, response) => {
     response.send('hello world')
+})
+
+app.get('/resolve', (request, response) => {
+    nodes.forEach((node) => {
+        fetch(node.url + '/blockchain')
+            .then((response) => {
+                return response.json()
+            })
+            .then((otherNodeBlockchain) => {
+                if (otherNodeBlockchain.blocks.length > blockchain.blocks.length) {
+                    blockchain = otherNodeBlockchain
+                }
+                response.send(blockchain)
+            })
+    })
 })
 
 app.post('/nodes/register', (request, response) => {
@@ -47,8 +64,8 @@ app.post('/nodes/register', (request, response) => {
 
 app.get('/mine', (request, response) => {
     const minedBlock = blockchain.getNextBlock(transactions)
-    blockchain.addBlock(minedBlock)
     transactions = []
+    blockchain.addBlock(minedBlock)
     response.json(minedBlock)
 })
 
